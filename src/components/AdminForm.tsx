@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from "@/hooks/use-toast";
@@ -87,7 +88,6 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
         // Use the new addProduct function
         await addProduct(newProduct);
         
-        // Fix: Change toast with object literal to toast function call with correct parameters
         toast("Product created", {
           description: `${data.title} has been added to the catalog`,
         });
@@ -101,9 +101,11 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
         }
       } catch (error) {
         console.error("Error adding product:", error);
+        // Fix: Remove the 'variant' property which doesn't exist in sonner toast
+        // and use the appropriate method for error toasts
         toast("Failed to add product", { 
           description: "There was an error adding the product",
-          variant: "destructive" 
+          style: { backgroundColor: 'hsl(var(--destructive))' }
         });
       }
     }
