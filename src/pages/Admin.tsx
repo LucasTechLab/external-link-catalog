@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminForm from '@/components/AdminForm';
@@ -7,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from '@/components/ui/sonner';
 import { Lock, Edit, Trash2, ArrowLeft } from 'lucide-react';
-import { products } from '@/data/products';
+import { products, deleteProduct, updateProduct } from '@/data/products';
 import { 
   Table, 
   TableBody, 
@@ -44,6 +43,7 @@ const Admin: React.FC = () => {
     imageUrl: string;
     externalUrl: string;
     category: string;
+    price?: number;
   }>(null);
   const [showForm, setShowForm] = useState(false);
 
@@ -70,12 +70,9 @@ const Admin: React.FC = () => {
   };
 
   const handleDelete = (productId: string) => {
-    const updatedProducts = productList.filter((p) => p.id !== productId);
-    setProductList(updatedProducts);
-    
-    // Also update the main products array (in a real app this would be an API call)
-    products.length = 0;
-    products.push(...updatedProducts);
+    // Use the new deleteProduct function
+    deleteProduct(productId);
+    setProductList([...products]); // Update the local state with the updated products array
     
     toast.success('Product deleted', {
       description: 'The product has been removed successfully',
@@ -90,30 +87,24 @@ const Admin: React.FC = () => {
   const handleFormSubmit = (newProduct: any) => {
     // If we're editing an existing product
     if (editingProduct) {
-      const updatedProducts = productList.map((p) => 
-        p.id === editingProduct.id ? { 
-          ...p,
-          title: newProduct.title,
-          description: newProduct.description,
-          imageUrl: newProduct.imageUrl,
-          category: newProduct.category,
-          price: parseFloat(newProduct.price)
-        } : p
-      );
-      setProductList(updatedProducts);
+      const updatedProduct = { 
+        ...editingProduct,
+        title: newProduct.title,
+        description: newProduct.description,
+        imageUrl: newProduct.imageUrl,
+        category: newProduct.category,
+        price: parseFloat(newProduct.price)
+      };
       
-      // Also update the main products array
-      products.length = 0;
-      products.push(...updatedProducts);
+      // Use the new updateProduct function
+      updateProduct(updatedProduct);
       
       toast.success('Product updated', {
         description: `${newProduct.title} has been updated successfully`,
       });
-    } else {
-      // For new products - AdminForm handles the adding logic already
-      setProductList([...products]);
     }
     
+    setProductList([...products]); // Update the local state with the updated products array
     setShowForm(false);
     setEditingProduct(null);
   };

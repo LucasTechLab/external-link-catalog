@@ -16,7 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { products } from '@/data/products';
+import { addProduct } from '@/data/products';
 
 const formSchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters" }),
@@ -74,7 +74,7 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
     } else {
       // Adding a new product
       const newProduct = {
-        id: (products.length + 1).toString(),
+        id: Date.now().toString(), // Use timestamp for unique ID
         title: data.title,
         description: data.description,
         imageUrl: data.imageUrl,
@@ -83,10 +83,8 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
         price: parseFloat(data.price),
       };
       
-      // In a real app with a backend, we'd make an API call here
-      // Since we're just using an in-memory array, we'll push to it
-      // Note: this won't persist after page refresh
-      products.push(newProduct);
+      // Use the new addProduct function
+      addProduct(newProduct);
       
       toast({
         title: "Product created",
