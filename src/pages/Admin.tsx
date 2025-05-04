@@ -1,11 +1,11 @@
-
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AdminForm from '@/components/AdminForm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from '@/components/ui/sonner';
-import { Lock, Edit, Trash2 } from 'lucide-react';
+import { Lock, Edit, Trash2, ArrowLeft } from 'lucide-react';
 import { products } from '@/data/products';
 import { 
   Table, 
@@ -31,6 +31,7 @@ import {
 const ADMIN_PASSWORD = 'admin123';
 
 const Admin: React.FC = () => {
+  const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -109,6 +110,10 @@ const Admin: React.FC = () => {
     setEditingProduct(null);
   };
 
+  const goToLandingPage = () => {
+    navigate('/');
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -152,7 +157,14 @@ const Admin: React.FC = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="container py-8">
-        <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" onClick={goToLandingPage} aria-label="Back to home">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+          </div>
+        </div>
         
         {showForm ? (
           <div className="bg-card rounded-lg shadow p-6 mb-8">
