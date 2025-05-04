@@ -11,6 +11,7 @@ export interface Product {
   imageUrl: string;
   externalUrl: string;
   category: string;
+  price?: number; // Added price field as optional for backward compatibility
 }
 
 interface ProductCardProps {
@@ -29,6 +30,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
       <CardHeader className="pb-2">
         <h3 className="text-lg font-semibold line-clamp-1">{product.title}</h3>
+        {product.price !== undefined && (
+          <p className="text-base font-medium text-primary">
+            ${product.price.toFixed(2)}
+          </p>
+        )}
       </CardHeader>
       <CardContent className="pb-4">
         <p className="text-sm text-muted-foreground line-clamp-3">{product.description}</p>

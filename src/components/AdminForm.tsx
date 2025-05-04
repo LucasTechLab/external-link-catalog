@@ -23,6 +23,10 @@ const formSchema = z.object({
   description: z.string().min(10, { message: "Description must be at least 10 characters" }),
   imageUrl: z.string().url({ message: "Must be a valid URL" }),
   category: z.string().min(1, { message: "Category is required" }),
+  price: z.string()
+    .refine(val => !isNaN(parseFloat(val)) && parseFloat(val) >= 0, {
+      message: "Price must be a positive number",
+    }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -35,6 +39,7 @@ interface AdminFormProps {
     imageUrl: string;
     externalUrl: string;
     category: string;
+    price?: number;
   };
   onSubmit?: (data: FormValues) => void;
 }
@@ -45,11 +50,18 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialValues || {
+    defaultValues: initialValues ? {
+      title: initialValues.title,
+      description: initialValues.description,
+      imageUrl: initialValues.imageUrl,
+      category: initialValues.category,
+      price: initialValues.price?.toString() || "0",
+    } : {
       title: "",
       description: "",
       imageUrl: "",
       category: "",
+      price: "0",
     },
   });
 
@@ -68,6 +80,7 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
         imageUrl: data.imageUrl,
         externalUrl: "", // We'll keep this empty since we removed the field
         category: data.category,
+        price: parseFloat(data.price),
       };
       
       // In a real app with a backend, we'd make an API call here
@@ -133,6 +146,26 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
               <FormLabel>Image URL</FormLabel>
               <FormControl>
                 <Input placeholder="https://example.com/image.jpg" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="price"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Price ($)</FormLabel>
+              <FormControl>
+                <Input 
+                  type="number" 
+                  min="0" 
+                  step="0.01" 
+                  placeholder="29.99" 
+                  {...field} 
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

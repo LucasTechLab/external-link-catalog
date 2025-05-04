@@ -96,7 +96,8 @@ const Admin: React.FC = () => {
           title: newProduct.title,
           description: newProduct.description,
           imageUrl: newProduct.imageUrl,
-          category: newProduct.category
+          category: newProduct.category,
+          price: parseFloat(newProduct.price)
         } : p
       );
       setProductList(updatedProducts);
@@ -209,6 +210,7 @@ const Admin: React.FC = () => {
                 <TableRow>
                   <TableHead>Title</TableHead>
                   <TableHead>Category</TableHead>
+                  <TableHead>Price</TableHead>
                   <TableHead>Description</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -218,6 +220,7 @@ const Admin: React.FC = () => {
                   <TableRow key={product.id}>
                     <TableCell className="font-medium">{product.title}</TableCell>
                     <TableCell>{product.category}</TableCell>
+                    <TableCell>${product.price?.toFixed(2) || '0.00'}</TableCell>
                     <TableCell className="max-w-md truncate">{product.description}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
