@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminForm from '@/components/AdminForm';
@@ -90,7 +91,13 @@ const Admin: React.FC = () => {
     // If we're editing an existing product
     if (editingProduct) {
       const updatedProducts = productList.map((p) => 
-        p.id === editingProduct.id ? { ...newProduct, id: editingProduct.id } : p
+        p.id === editingProduct.id ? { 
+          ...p,
+          title: newProduct.title,
+          description: newProduct.description,
+          imageUrl: newProduct.imageUrl,
+          category: newProduct.category
+        } : p
       );
       setProductList(updatedProducts);
       

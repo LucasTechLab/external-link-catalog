@@ -22,7 +22,6 @@ const formSchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters" }),
   description: z.string().min(10, { message: "Description must be at least 10 characters" }),
   imageUrl: z.string().url({ message: "Must be a valid URL" }),
-  externalUrl: z.string().url({ message: "Must be a valid URL" }),
   category: z.string().min(1, { message: "Category is required" }),
 });
 
@@ -50,7 +49,6 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
       title: "",
       description: "",
       imageUrl: "",
-      externalUrl: "",
       category: "",
     },
   });
@@ -68,7 +66,7 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
         title: data.title,
         description: data.description,
         imageUrl: data.imageUrl,
-        externalUrl: data.externalUrl,
+        externalUrl: "", // We'll keep this empty since we removed the field
         category: data.category,
       };
       
@@ -135,20 +133,6 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
               <FormLabel>Image URL</FormLabel>
               <FormControl>
                 <Input placeholder="https://example.com/image.jpg" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={form.control}
-          name="externalUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>External Store URL</FormLabel>
-              <FormControl>
-                <Input placeholder="https://etsy.com/listing/..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
