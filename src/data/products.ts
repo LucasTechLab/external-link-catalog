@@ -1,4 +1,3 @@
-
 import { Product } from '../components/ProductCard';
 
 // Default products to use when the database is empty
@@ -131,8 +130,7 @@ const saveInitialProducts = async (): Promise<void> => {
     const transaction = db.transaction(STORE_NAME, 'readwrite');
     const store = transaction.objectStore(STORE_NAME);
     
-    // Fix: Instead of returning Promise.all (which returns void[]),
-    // we'll use Promise.all but not return its result
+    // Properly handle Promise.all to fix the TypeScript error
     await Promise.all(defaultProducts.map(product => {
       return new Promise<void>((resolve, reject) => {
         const request = store.add(product);
@@ -140,8 +138,6 @@ const saveInitialProducts = async (): Promise<void> => {
         request.onerror = () => reject(request.error);
       });
     }));
-    
-    return;
   } catch (error) {
     console.error("Error saving initial products:", error);
     throw error;

@@ -17,7 +17,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { addProduct } from '@/data/products';
-import { toast } from '@/components/ui/sonner';
 
 const formSchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters" }),
@@ -46,7 +45,7 @@ interface AdminFormProps {
 }
 
 const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
-  const { toast: hookToast } = useToast();
+  const { toast } = useToast();
   const navigate = useNavigate();
   
   const form = useForm<FormValues>({
@@ -88,7 +87,8 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
         // Use the new addProduct function
         await addProduct(newProduct);
         
-        toast("Product created", {
+        toast({
+          title: "Product created",
           description: `${data.title} has been added to the catalog`,
         });
         
@@ -101,11 +101,10 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
         }
       } catch (error) {
         console.error("Error adding product:", error);
-        // Fix: Remove the 'variant' property which doesn't exist in sonner toast
-        // and use the appropriate method for error toasts
-        toast("Failed to add product", { 
+        toast({
+          title: "Failed to add product",
           description: "There was an error adding the product",
-          style: { backgroundColor: 'hsl(var(--destructive))' }
+          variant: "destructive"
         });
       }
     }
