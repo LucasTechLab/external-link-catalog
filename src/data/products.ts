@@ -131,13 +131,17 @@ const saveInitialProducts = async (): Promise<void> => {
     const transaction = db.transaction(STORE_NAME, 'readwrite');
     const store = transaction.objectStore(STORE_NAME);
     
-    return Promise.all(defaultProducts.map(product => {
+    // Fix: Instead of returning Promise.all (which returns void[]),
+    // we'll use Promise.all but not return its result
+    await Promise.all(defaultProducts.map(product => {
       return new Promise<void>((resolve, reject) => {
         const request = store.add(product);
         request.onsuccess = () => resolve();
         request.onerror = () => reject(request.error);
       });
     }));
+    
+    return;
   } catch (error) {
     console.error("Error saving initial products:", error);
     throw error;
