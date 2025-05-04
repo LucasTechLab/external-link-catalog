@@ -1,9 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Edit, Trash2 } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
-import { products, deleteProduct, updateProduct } from '@/data/products';
+import { products, deleteProduct, updateProduct, loadProducts } from '@/data/products';
 import AdminForm from '@/components/AdminForm';
 import { 
   Table, 
@@ -41,6 +41,23 @@ const ProductManagement: React.FC<ProductManagementProps> = ({ onBack }) => {
     price?: number;
   }>(null);
   const [showForm, setShowForm] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const loadedProducts = await loadProducts();
+        setProductList(loadedProducts);
+      } catch (error) {
+        console.error("Error loading products:", error);
+        toast.error("Error loading products");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const handleEdit = (productId: string) => {
     const productToEdit = productList.find((p) => p.id === productId);
@@ -50,13 +67,18 @@ const ProductManagement: React.FC<ProductManagementProps> = ({ onBack }) => {
     }
   };
 
-  const handleDelete = (productId: string) => {
-    deleteProduct(productId);
-    setProductList([...products]); // Update the local state with the updated products array
-    
-    toast.success('Product deleted', {
-      description: 'The product has been removed successfully',
-    });
+  const handleDelete = async (productId: string) => {
+    try {
+      await deleteProduct(productId);
+      setProductList(productList.filter(p => p.id !== productId));
+      
+      toast.success('Product deleted', {
+        description: 'The product has been removed successfully',
+      });
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      toast.error("Failed to delete product");
+    }
   };
 
   const handleAddNewProduct = () => {
@@ -64,29 +86,44 @@ const ProductManagement: React.FC<ProductManagementProps> = ({ onBack }) => {
     setShowForm(true);
   };
 
-  const handleFormSubmit = (newProduct: any) => {
-    // If we're editing an existing product
-    if (editingProduct) {
-      const updatedProduct = { 
-        ...editingProduct,
-        title: newProduct.title,
-        description: newProduct.description,
-        imageUrl: newProduct.imageUrl,
-        category: newProduct.category,
-        price: parseFloat(newProduct.price)
-      };
+  const handleFormSubmit = async (newProduct: any) => {
+    try {
+      // If we're editing an existing product
+      if (editingProduct) {
+        const updatedProduct = { 
+          ...editingProduct,
+          title: newProduct.title,
+          description: newProduct.description,
+          imageUrl: newProduct.imageUrl,
+          category: newProduct.category,
+          price: parseFloat(newProduct.price)
+        };
+        
+        await updateProduct(updatedProduct);
+        setProductList(prevProducts => prevProducts.map(p => 
+          p.id === updatedProduct.id ? updatedProduct : p
+        ));
+        
+        toast.success('Product updated', {
+          description: `${newProduct.title} has been updated successfully`,
+        });
+      }
       
-      updateProduct(updatedProduct);
-      
-      toast.success('Product updated', {
-        description: `${newProduct.title} has been updated successfully`,
-      });
+      setShowForm(false);
+      setEditingProduct(null);
+    } catch (error) {
+      console.error("Error updating product:", error);
+      toast.error("Failed to update product");
     }
-    
-    setProductList([...products]); // Update the local state with the updated products array
-    setShowForm(false);
-    setEditingProduct(null);
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center p-8">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="container py-8">

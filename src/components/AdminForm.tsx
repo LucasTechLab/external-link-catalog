@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { addProduct } from '@/data/products';
+import { toast } from '@/components/ui/sonner';
 
 const formSchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters" }),
@@ -45,7 +46,7 @@ interface AdminFormProps {
 }
 
 const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
-  const { toast } = useToast();
+  const { toast: hookToast } = useToast();
   const navigate = useNavigate();
   
   const form = useForm<FormValues>({
@@ -65,38 +66,43 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
     },
   });
 
-  const handleSubmit = (data: FormValues) => {
+  const handleSubmit = async (data: FormValues) => {
     if (initialValues) {
       // Editing an existing product
       if (onSubmit) {
         onSubmit(data);
       }
     } else {
-      // Adding a new product
-      const newProduct = {
-        id: Date.now().toString(), // Use timestamp for unique ID
-        title: data.title,
-        description: data.description,
-        imageUrl: data.imageUrl,
-        externalUrl: "", // We'll keep this empty since we removed the field
-        category: data.category,
-        price: parseFloat(data.price),
-      };
-      
-      // Use the new addProduct function
-      addProduct(newProduct);
-      
-      toast({
-        title: "Product created",
-        description: `${data.title} has been added to the catalog`,
-      });
-      
-      if (onSubmit) {
-        onSubmit(data);
-      } else {
-        form.reset();
-        // Navigate back to the product list
-        navigate("/");
+      try {
+        // Adding a new product
+        const newProduct = {
+          id: Date.now().toString(), // Use timestamp for unique ID
+          title: data.title,
+          description: data.description,
+          imageUrl: data.imageUrl,
+          externalUrl: "", // We'll keep this empty since we removed the field
+          category: data.category,
+          price: parseFloat(data.price),
+        };
+        
+        // Use the new addProduct function
+        await addProduct(newProduct);
+        
+        toast({
+          title: "Product created",
+          description: `${data.title} has been added to the catalog`,
+        });
+        
+        if (onSubmit) {
+          onSubmit(data);
+        } else {
+          form.reset();
+          // Navigate back to the product list
+          navigate("/");
+        }
+      } catch (error) {
+        console.error("Error adding product:", error);
+        toast.error("Failed to add product");
       }
     }
   };
