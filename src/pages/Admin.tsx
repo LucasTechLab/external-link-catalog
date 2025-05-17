@@ -23,10 +23,10 @@ const Admin: React.FC = () => {
       <div className="container py-8">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" onClick={goToLandingPage} aria-label="Back to home">
+            <Button variant="ghost" size="icon" onClick={goToLandingPage} aria-label="Voltar para a página inicial">
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+            <h1 className="text-3xl font-bold">Painel de Administração</h1>
           </div>
         </div>
         

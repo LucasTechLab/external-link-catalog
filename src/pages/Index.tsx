@@ -30,10 +30,10 @@ const Index: React.FC = () => {
         <div className="container">
           <div className="flex flex-col items-center justify-center text-center">
             <p className="text-sm text-muted-foreground">
-              &copy; {new Date().getFullYear()} Product Showcase. All rights reserved.
+              &copy; {new Date().getFullYear()} Gilson Feira. Todos os direitos reservados.
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Products are sold on external platforms. This site is for display purposes only.
+              Produtos são vendidos em plataformas externas. Este site é apenas para fins de exibição.
             </p>
           </div>
         </div>

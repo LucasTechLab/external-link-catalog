@@ -11,7 +11,7 @@ export interface Product {
   imageUrl: string;
   externalUrl: string;
   category: string;
-  price?: number; // Added price field as optional for backward compatibility
+  price?: number;
 }
 
 interface ProductCardProps {
@@ -19,6 +19,10 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const handleViewProduct = () => {
+    window.open(product.externalUrl, '_blank');
+  };
+
   return (
     <Card className="h-full overflow-hidden group transition-all duration-300 hover:shadow-lg animate-fade-in">
       <div className="relative overflow-hidden w-full pt-[100%]">
@@ -32,7 +36,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <h3 className="text-lg font-semibold line-clamp-1">{product.title}</h3>
         {product.price !== undefined && (
           <p className="text-base font-medium text-primary">
-            ${product.price.toFixed(2)}
+            R$ {product.price.toFixed(2)}
           </p>
         )}
       </CardHeader>
@@ -42,9 +46,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       <CardFooter>
         <Button 
           className="w-full bg-catalog-primary hover:bg-catalog-primary/90 transition-all duration-300 gap-2"
-          onClick={() => window.open(product.externalUrl, '_blank')}
+          onClick={handleViewProduct}
         >
-          View Product <ExternalLink size={16} />
+          Ver Produto <ExternalLink size={16} />
         </Button>
       </CardFooter>
     </Card>

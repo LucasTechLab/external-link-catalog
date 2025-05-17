@@ -49,8 +49,8 @@ const ProductManagement: React.FC<ProductManagementProps> = ({ onBack }) => {
         const loadedProducts = await loadProducts();
         setProductList(loadedProducts);
       } catch (error) {
-        console.error("Error loading products:", error);
-        toast.error("Error loading products");
+        console.error("Erro ao carregar produtos:", error);
+        toast.error("Erro ao carregar produtos");
       } finally {
         setIsLoading(false);
       }
@@ -72,12 +72,12 @@ const ProductManagement: React.FC<ProductManagementProps> = ({ onBack }) => {
       await deleteProduct(productId);
       setProductList(productList.filter(p => p.id !== productId));
       
-      toast.success('Product deleted', {
-        description: 'The product has been removed successfully',
+      toast.success('Produto excluído', {
+        description: 'O produto foi removido com sucesso',
       });
     } catch (error) {
-      console.error("Error deleting product:", error);
-      toast.error("Failed to delete product");
+      console.error("Erro ao excluir produto:", error);
+      toast.error("Falha ao excluir produto");
     }
   };
 
@@ -95,6 +95,7 @@ const ProductManagement: React.FC<ProductManagementProps> = ({ onBack }) => {
           title: newProduct.title,
           description: newProduct.description,
           imageUrl: newProduct.imageUrl,
+          externalUrl: newProduct.externalUrl,
           category: newProduct.category,
           price: parseFloat(newProduct.price)
         };
@@ -104,16 +105,16 @@ const ProductManagement: React.FC<ProductManagementProps> = ({ onBack }) => {
           p.id === updatedProduct.id ? updatedProduct : p
         ));
         
-        toast.success('Product updated', {
-          description: `${newProduct.title} has been updated successfully`,
+        toast.success('Produto atualizado', {
+          description: `${newProduct.title} foi atualizado com sucesso`,
         });
       }
       
       setShowForm(false);
       setEditingProduct(null);
     } catch (error) {
-      console.error("Error updating product:", error);
-      toast.error("Failed to update product");
+      console.error("Erro ao atualizar produto:", error);
+      toast.error("Falha ao atualizar produto");
     }
   };
 
@@ -131,10 +132,10 @@ const ProductManagement: React.FC<ProductManagementProps> = ({ onBack }) => {
         <div className="bg-card rounded-lg shadow p-6 mb-8">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">
-              {editingProduct ? 'Edit Product' : 'Add New Product'}
+              {editingProduct ? 'Editar Produto' : 'Adicionar Novo Produto'}
             </h2>
             <Button variant="outline" onClick={() => setShowForm(false)}>
-              Cancel
+              Cancelar
             </Button>
           </div>
           <AdminForm 
@@ -145,27 +146,27 @@ const ProductManagement: React.FC<ProductManagementProps> = ({ onBack }) => {
       ) : (
         <div className="flex justify-end mb-6">
           <Button onClick={handleAddNewProduct}>
-            Add New Product
+            Adicionar Novo Produto
           </Button>
         </div>
       )}
       
       <div className="bg-card rounded-lg shadow overflow-hidden">
-        <h2 className="text-xl font-semibold p-6 border-b">Product Management</h2>
+        <h2 className="text-xl font-semibold p-6 border-b">Gerenciamento de Produtos</h2>
         
         {productList.length === 0 ? (
           <div className="p-6 text-center text-muted-foreground">
-            No products available. Add your first product above.
+            Nenhum produto disponível. Adicione seu primeiro produto acima.
           </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>Título</TableHead>
+                <TableHead>Categoria</TableHead>
+                <TableHead>Preço</TableHead>
+                <TableHead>Descrição</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -173,7 +174,7 @@ const ProductManagement: React.FC<ProductManagementProps> = ({ onBack }) => {
                 <TableRow key={product.id}>
                   <TableCell className="font-medium">{product.title}</TableCell>
                   <TableCell>{product.category}</TableCell>
-                  <TableCell>${product.price?.toFixed(2) || '0.00'}</TableCell>
+                  <TableCell>R$ {product.price?.toFixed(2) || '0,00'}</TableCell>
                   <TableCell className="max-w-md truncate">{product.description}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
@@ -193,18 +194,18 @@ const ProductManagement: React.FC<ProductManagementProps> = ({ onBack }) => {
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Delete Product</AlertDialogTitle>
+                            <AlertDialogTitle>Excluir Produto</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Are you sure you want to delete "{product.title}"? This action cannot be undone.
+                              Tem certeza que deseja excluir "{product.title}"? Esta ação não pode ser desfeita.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
                             <AlertDialogAction 
                               onClick={() => handleDelete(product.id)}
                               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             >
-                              Delete
+                              Excluir
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>

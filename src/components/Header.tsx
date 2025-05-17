@@ -7,10 +7,10 @@ const Header: React.FC = () => {
       <div className="container">
         <div className="flex flex-col items-center justify-center text-center">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 animate-fade-in">
-            Product Showcase
+            Gilson Feira
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl animate-slide-in">
-            Browse our collection of handcrafted products available on various platforms
+            Navegue pela nossa coleção de produtos artesanais disponíveis em várias plataformas
           </p>
         </div>
       </div>
