@@ -1,3 +1,4 @@
+
 import { Product } from '../components/ProductCard';
 
 // Default products to use when the database is empty
