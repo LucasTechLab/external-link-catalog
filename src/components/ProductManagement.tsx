@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2, ExternalLink } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
 import { products, deleteProduct, updateProduct, loadProducts } from '@/data/products';
 import AdminForm from '@/components/AdminForm';
@@ -86,6 +86,14 @@ const ProductManagement: React.FC<ProductManagementProps> = ({ onBack }) => {
     setShowForm(true);
   };
 
+  const handleViewExternalUrl = (url: string) => {
+    if (url) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    } else {
+      toast.error("URL externa não definida para este produto");
+    }
+  };
+
   const handleFormSubmit = async (newProduct: any) => {
     try {
       // If we're editing an existing product
@@ -166,6 +174,7 @@ const ProductManagement: React.FC<ProductManagementProps> = ({ onBack }) => {
                 <TableHead>Categoria</TableHead>
                 <TableHead>Preço</TableHead>
                 <TableHead>Descrição</TableHead>
+                <TableHead>Link Externo</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -176,6 +185,18 @@ const ProductManagement: React.FC<ProductManagementProps> = ({ onBack }) => {
                   <TableCell>{product.category}</TableCell>
                   <TableCell>R$ {product.price?.toFixed(2) || '0,00'}</TableCell>
                   <TableCell className="max-w-md truncate">{product.description}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="flex items-center gap-1 text-blue-500 hover:text-blue-700"
+                      onClick={() => handleViewExternalUrl(product.externalUrl)}
+                      disabled={!product.externalUrl}
+                    >
+                      <ExternalLink className="h-4 w-4" /> 
+                      {product.externalUrl ? 'Ver Produto' : 'Sem link'}
+                    </Button>
+                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button 

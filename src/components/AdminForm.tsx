@@ -19,13 +19,14 @@ import {
 import { addProduct } from '@/data/products';
 
 const formSchema = z.object({
-  title: z.string().min(3, { message: "Title must be at least 3 characters" }),
-  description: z.string().min(10, { message: "Description must be at least 10 characters" }),
-  imageUrl: z.string().url({ message: "Must be a valid URL" }),
-  category: z.string().min(1, { message: "Category is required" }),
+  title: z.string().min(3, { message: "Título deve ter pelo menos 3 caracteres" }),
+  description: z.string().min(10, { message: "Descrição deve ter pelo menos 10 caracteres" }),
+  imageUrl: z.string().url({ message: "A URL da imagem deve ser válida" }),
+  externalUrl: z.string().url({ message: "A URL externa deve ser válida" }),
+  category: z.string().min(1, { message: "Categoria é obrigatória" }),
   price: z.string()
     .refine(val => !isNaN(parseFloat(val)) && parseFloat(val) >= 0, {
-      message: "Price must be a positive number",
+      message: "O preço deve ser um número positivo",
     }),
 });
 
@@ -54,12 +55,14 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
       title: initialValues.title,
       description: initialValues.description,
       imageUrl: initialValues.imageUrl,
+      externalUrl: initialValues.externalUrl,
       category: initialValues.category,
       price: initialValues.price?.toString() || "0",
     } : {
       title: "",
       description: "",
       imageUrl: "",
+      externalUrl: "",
       category: "",
       price: "0",
     },
@@ -79,7 +82,7 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
           title: data.title,
           description: data.description,
           imageUrl: data.imageUrl,
-          externalUrl: "", // We'll keep this empty since we removed the field
+          externalUrl: data.externalUrl,
           category: data.category,
           price: parseFloat(data.price),
         };
@@ -88,8 +91,8 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
         await addProduct(newProduct);
         
         toast({
-          title: "Product created",
-          description: `${data.title} has been added to the catalog`,
+          title: "Produto criado",
+          description: `${data.title} foi adicionado ao catálogo`,
         });
         
         if (onSubmit) {
@@ -102,8 +105,8 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
       } catch (error) {
         console.error("Error adding product:", error);
         toast({
-          title: "Failed to add product",
-          description: "There was an error adding the product",
+          title: "Falha ao adicionar produto",
+          description: "Ocorreu um erro ao adicionar o produto",
           variant: "destructive"
         });
       }
@@ -118,9 +121,9 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Product Title</FormLabel>
+              <FormLabel>Título do Produto</FormLabel>
               <FormControl>
-                <Input placeholder="Handcrafted Ceramic Mug" {...field} />
+                <Input placeholder="Caneca Artesanal de Cerâmica" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -132,10 +135,10 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>Descrição</FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder="A beautiful handcrafted ceramic mug, perfect for your morning coffee..." 
+                  placeholder="Uma linda caneca artesanal de cerâmica, perfeita para seu café da manhã..." 
                   className="min-h-[100px]"
                   {...field} 
                 />
@@ -150,9 +153,23 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
           name="imageUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Image URL</FormLabel>
+              <FormLabel>URL da Imagem</FormLabel>
               <FormControl>
-                <Input placeholder="https://example.com/image.jpg" {...field} />
+                <Input placeholder="https://exemplo.com/imagem.jpg" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="externalUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>URL do Produto (link externo)</FormLabel>
+              <FormControl>
+                <Input placeholder="https://loja.com/produto" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -164,7 +181,7 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
           name="price"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Price ($)</FormLabel>
+              <FormLabel>Preço (R$)</FormLabel>
               <FormControl>
                 <Input 
                   type="number" 
@@ -184,9 +201,9 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
           name="category"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Category</FormLabel>
+              <FormLabel>Categoria</FormLabel>
               <FormControl>
-                <Input placeholder="Home, Kitchen, Art, etc." {...field} />
+                <Input placeholder="Casa, Cozinha, Arte, etc." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -195,7 +212,7 @@ const AdminForm: React.FC<AdminFormProps> = ({ initialValues, onSubmit }) => {
         
         <div className="flex justify-end">
           <Button type="submit">
-            {initialValues ? 'Update Product' : 'Add Product'}
+            {initialValues ? 'Atualizar Produto' : 'Adicionar Produto'}
           </Button>
         </div>
       </form>
